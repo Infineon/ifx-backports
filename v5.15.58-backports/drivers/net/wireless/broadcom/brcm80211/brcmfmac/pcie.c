@@ -125,7 +125,8 @@ static const struct brcmf_firmware_mapping brcmf_pcie_fwnames[] = {
 
 #define BRCMF_PCIE_REG_LINK_STATUS_CTRL		0xBC
 
-#define BRCMF_PCIE_PCIE2REG_INTMASK		0x24
+#define BRCMF_PCIE_PCIE2REG_INTMASK(dev)	(BRCMF_PCIE_REV_GE64(dev) ? \
+						 0xC14 : 0x24)
 #define BRCMF_PCIE_PCIE2REG_MAILBOXINT(dev)	(BRCMF_PCIE_REV_GE64(dev) ? \
 						 0xC30 : 0x48)
 #define BRCMF_PCIE_PCIE2REG_MAILBOXMASK(dev)	(BRCMF_PCIE_REV_GE64(dev) ? \
@@ -469,8 +470,6 @@ brcmf_pcie_write_reg32(struct brcmf_pciedev_info *devinfo, u32 reg_offset,
 static u8
 brcmf_pcie_read_tcm8(struct brcmf_pciedev_info *devinfo, u32 mem_offset)
 {
-	struct pci_dev *pdev = devinfo->pdev;
-	struct brcmf_bus *bus = dev_get_drvdata(&pdev->dev);
 	void __iomem *address = devinfo->tcm + mem_offset;
 #ifdef CPTCFG_BRCMFMAC_PCIE_BARWIN_SZ
 	unsigned long flags;
@@ -488,6 +487,8 @@ brcmf_pcie_read_tcm8(struct brcmf_pciedev_info *devinfo, u32 mem_offset)
 
 	return value;
 #else
+	struct pci_dev *pdev = devinfo->pdev;
+	struct brcmf_bus *bus = dev_get_drvdata(&pdev->dev);
 	if ((address - devinfo->tcm) >= devinfo->bar1_size) {
 		brcmf_err(bus,
 			  "mem_offset:%d exceeds device size=%ld\n",
@@ -503,8 +504,6 @@ brcmf_pcie_read_tcm8(struct brcmf_pciedev_info *devinfo, u32 mem_offset)
 static u16
 brcmf_pcie_read_tcm16(struct brcmf_pciedev_info *devinfo, u32 mem_offset)
 {
-	struct pci_dev *pdev = devinfo->pdev;
-	struct brcmf_bus *bus = dev_get_drvdata(&pdev->dev);
 	void __iomem *address = devinfo->tcm + mem_offset;
 #ifdef CPTCFG_BRCMFMAC_PCIE_BARWIN_SZ
 	u16 value;
@@ -522,6 +521,8 @@ brcmf_pcie_read_tcm16(struct brcmf_pciedev_info *devinfo, u32 mem_offset)
 
 	return value;
 #else
+	struct pci_dev *pdev = devinfo->pdev;
+	struct brcmf_bus *bus = dev_get_drvdata(&pdev->dev);
 	if ((address - devinfo->tcm) >= devinfo->bar1_size) {
 		brcmf_err(bus, "mem_offset:%d exceeds device size=%ld\n",
 				mem_offset, devinfo->bar1_size);
@@ -537,8 +538,6 @@ static void
 brcmf_pcie_write_tcm16(struct brcmf_pciedev_info *devinfo, u32 mem_offset,
 		       u16 value)
 {
-	struct pci_dev *pdev = devinfo->pdev;
-	struct brcmf_bus *bus = dev_get_drvdata(&pdev->dev);
 	void __iomem *address = devinfo->tcm + mem_offset;
 #ifdef CPTCFG_BRCMFMAC_PCIE_BARWIN_SZ
 	unsigned long flags;
@@ -554,6 +553,8 @@ brcmf_pcie_write_tcm16(struct brcmf_pciedev_info *devinfo, u32 mem_offset,
 	pci_write_config_dword(devinfo->pdev, BCMA_PCI_BAR1_WIN, 0x0);
 	raw_spin_unlock_irqrestore(&pcie_lock, flags);
 #else
+	struct pci_dev *pdev = devinfo->pdev;
+	struct brcmf_bus *bus = dev_get_drvdata(&pdev->dev);
 	if ((address - devinfo->tcm) >= devinfo->bar1_size) {
 		brcmf_err(bus, "mem_offset:%d exceeds device size=%ld\n",
 				mem_offset, devinfo->bar1_size);
@@ -587,8 +588,6 @@ brcmf_pcie_write_idx(struct brcmf_pciedev_info *devinfo, u32 mem_offset,
 static u32
 brcmf_pcie_read_tcm32(struct brcmf_pciedev_info *devinfo, u32 mem_offset)
 {
-	struct pci_dev *pdev = devinfo->pdev;
-	struct brcmf_bus *bus = dev_get_drvdata(&pdev->dev);
 	void __iomem *address = devinfo->tcm + mem_offset;
 #ifdef CPTCFG_BRCMFMAC_PCIE_BARWIN_SZ
 	u32 value;
@@ -606,6 +605,8 @@ brcmf_pcie_read_tcm32(struct brcmf_pciedev_info *devinfo, u32 mem_offset)
 
 	return value;
 #else
+	struct pci_dev *pdev = devinfo->pdev;
+	struct brcmf_bus *bus = dev_get_drvdata(&pdev->dev);
 	if ((address - devinfo->tcm) >= devinfo->bar1_size) {
 		brcmf_err(bus, "mem_offset:%d exceeds device size=%ld\n",
 			  mem_offset, devinfo->bar1_size);
@@ -621,8 +622,6 @@ static void
 brcmf_pcie_write_tcm32(struct brcmf_pciedev_info *devinfo, u32 mem_offset,
 		       u32 value)
 {
-	struct pci_dev *pdev = devinfo->pdev;
-	struct brcmf_bus *bus = dev_get_drvdata(&pdev->dev);
 	void __iomem *address = devinfo->tcm + mem_offset;
 #ifdef CPTCFG_BRCMFMAC_PCIE_BARWIN_SZ
 	unsigned long flags;
@@ -637,6 +636,8 @@ brcmf_pcie_write_tcm32(struct brcmf_pciedev_info *devinfo, u32 mem_offset,
 	pci_write_config_dword(devinfo->pdev, BCMA_PCI_BAR1_WIN, 0x0);
 	raw_spin_unlock_irqrestore(&pcie_lock, flags);
 #else
+	struct pci_dev *pdev = devinfo->pdev;
+	struct brcmf_bus *bus = dev_get_drvdata(&pdev->dev);
 	if ((address - devinfo->tcm) >= devinfo->bar1_size) {
 		brcmf_err(bus, "mem_offset:%d exceeds device size=%ld\n",
 			  mem_offset, devinfo->bar1_size);
@@ -651,8 +652,6 @@ brcmf_pcie_write_tcm32(struct brcmf_pciedev_info *devinfo, u32 mem_offset,
 static u32
 brcmf_pcie_read_ram32(struct brcmf_pciedev_info *devinfo, u32 mem_offset)
 {
-	struct pci_dev *pdev = devinfo->pdev;
-	struct brcmf_bus *bus = dev_get_drvdata(&pdev->dev);
 	void __iomem *address = devinfo->tcm + devinfo->ci->rambase
 		+ mem_offset;
 #ifdef CPTCFG_BRCMFMAC_PCIE_BARWIN_SZ
@@ -671,6 +670,8 @@ brcmf_pcie_read_ram32(struct brcmf_pciedev_info *devinfo, u32 mem_offset)
 
 	return value;
 #else
+	struct pci_dev *pdev = devinfo->pdev;
+	struct brcmf_bus *bus = dev_get_drvdata(&pdev->dev);
 	if ((address - devinfo->tcm) >= devinfo->bar1_size) {
 		brcmf_err(bus, "mem_offset:%d exceeds device size=%ld\n",
 			  mem_offset, devinfo->bar1_size);
@@ -686,8 +687,6 @@ static void
 brcmf_pcie_write_ram32(struct brcmf_pciedev_info *devinfo, u32 mem_offset,
 		       u32 value)
 {
-	struct pci_dev *pdev = devinfo->pdev;
-	struct brcmf_bus *bus = dev_get_drvdata(&pdev->dev);
 	void __iomem *address = devinfo->tcm + devinfo->ci->rambase
 		+ mem_offset;
 #ifdef CPTCFG_BRCMFMAC_PCIE_BARWIN_SZ
@@ -703,6 +702,8 @@ brcmf_pcie_write_ram32(struct brcmf_pciedev_info *devinfo, u32 mem_offset,
 	pci_write_config_dword(devinfo->pdev, BCMA_PCI_BAR1_WIN, 0x0);
 	raw_spin_unlock_irqrestore(&pcie_lock, flags);
 #else
+	struct pci_dev *pdev = devinfo->pdev;
+	struct brcmf_bus *bus = dev_get_drvdata(&pdev->dev);
 	if ((address - devinfo->tcm) >= devinfo->bar1_size) {
 		brcmf_err(bus, "mem_offset:%d exceeds device size=%ld\n",
 			  mem_offset, devinfo->bar1_size);
@@ -2897,7 +2898,7 @@ static int brcmf_pcie_pm_leave_D3(struct device *dev)
 	brcmf_dbg(PCIE, "Enter, dev=%p, bus=%p\n", dev, bus);
 
 	/* Check if device is still up and running, if so we are ready */
-	if (brcmf_pcie_read_reg32(devinfo, BRCMF_PCIE_PCIE2REG_INTMASK) != 0) {
+	if (brcmf_pcie_read_reg32(devinfo, BRCMF_PCIE_PCIE2REG_INTMASK(devinfo)) != 0) {
 		brcmf_dbg(PCIE, "Try to wakeup device....\n");
 		if (devinfo->use_d0_inform) {
 			if (brcmf_pcie_send_mb_data(devinfo,
