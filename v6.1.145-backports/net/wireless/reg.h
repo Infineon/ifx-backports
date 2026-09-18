@@ -78,7 +78,7 @@ bool reg_last_request_cell_base(void);
  * 1-11 are already enabled by the world regulatory domain; and on
  * non-radar 5 GHz channels.
  *
- * Drivers do not need to call this, cfg80211 will do it for after a scan
+ * Drivers do not need to call this, cfg80211 will do it after a scan
  * on a newly found BSS. If you cannot make use of this feature you can
  * set the wiphy->disable_beacon_hints to true.
  */
@@ -115,7 +115,7 @@ void regulatory_hint_country_ie(struct wiphy *wiphy,
 /**
  * regulatory_hint_disconnect - informs all devices have been disconnected
  *
- * Regulotory rules can be enhanced further upon scanning and upon
+ * Regulatory rules can be enhanced further upon scanning and upon
  * connection to an AP. These rules become stale if we disconnect
  * and go to another country, whether or not we suspend and resume.
  * If we suspend, go to another country and resume we'll automatically
