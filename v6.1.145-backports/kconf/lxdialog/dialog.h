@@ -176,7 +176,7 @@ struct dialog_item {
 	int selected;	/* Set to 1 by dialog_*() function if selected. */
 };
 
-/* list of lialog_items */
+/* list of dialog_items */
 struct dialog_list {
 	struct dialog_item node;
 	struct dialog_list *next;

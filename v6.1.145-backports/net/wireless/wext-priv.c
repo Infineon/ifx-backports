@@ -1,5 +1,5 @@
 /*
- * This file implement the Wireless Extensions priv API.
+ * This file implements the Wireless Extensions priv API.
  *
  * Authors :	Jean Tourrilhes - HPL - <jt@hpl.hp.com>
  * Copyright (c) 1997-2007 Jean Tourrilhes, All Rights Reserved.
@@ -83,7 +83,7 @@ static int adjust_priv_size(__u16 args, struct iw_point *iwp)
  * is struct iw_priv_args, which was not really designed for the
  * job we are going here.
  *
- * IMPORTANT : This function prevent to set and get data on the same
+ * IMPORTANT : This function prevents setting and getting data on the same
  * IOCTL and enforce the SET/GET convention. Not doing it would be
  * far too hairy...
  * If you need to set and get data at the same time, please don't use
